@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar {
+            background-color: #3498db;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        .icon-box {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        #errorMsg, #successMsg {
+            display: none;
+        }
+        .auth-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        #dashboard, #patientSection, #doctorSection, #mappingSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">Healthcare Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="navItems">
+                    <!-- Nav items will be added dynamically -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="alert alert-danger" id="errorMsg"></div>
+        <div class="alert alert-success" id="successMsg"></div>
+
+        <!-- Auth Section -->
+        <div id="authSection">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Login</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="loginForm" class="auth-form">
+                                <div class="mb-3">
+                                    <label for="loginUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="loginUsername" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Register</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="registerForm" class="auth-form">
+                                <div class="mb-3">
+                                    <label for="regUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="regUsername" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="regEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="regEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="regFirstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="regFirstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="regLastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="regLastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="regPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="regPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="regPassword2" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="regPassword2" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Register</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard">
+            <h2 class="text-center mb-4">Healthcare Dashboard</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="icon-box">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <h5 class="card-title">Patients</h5>
+                            <p class="card-text">Manage patient records</p>
+                            <button class="btn btn-primary" id="showPatients">View Patients</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="icon-box">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <h5 class="card-title">Doctors</h5>
+                            <p class="card-text">Manage doctor records</p>
+                            <button class="btn btn-primary" id="showDoctors">View Doctors</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="icon-box">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <h5 class="card-title">Assignments</h5>
+                            <p class="card-text">Manage doctor-patient assignments</p>
+                            <button class="btn btn-primary" id="showMappings">View Assignments</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Section -->
+        <div id="patientSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Patient Management</h2>
+                <button class="btn btn-primary" id="addPatientBtn">Add New Patient</button>
+            </div>
+            <div class="card mb-4" id="patientFormCard" style="display: none;">
+                <div class="card-header bg-primary text-white">
+                    <h5 id="patientFormTitle">Add New Patient</h5>
+                </div>
+                <div class="card-body">
+                    <form id="patientForm">
+                        <input type="hidden" id="patientId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="patientName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="patientName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="patientDob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="patientDob" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="patientGender" class="form-label">Gender</label>
+                                <select class="form-control" id="patientGender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="patientPhone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="patientPhone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="patientAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="patientAddress" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="patientMedicalHistory" class="form-label">Medical History</label>
+                            <textarea class="form-control" id="patientMedicalHistory" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="cancelPatientBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="savePatientBtn">Save Patient</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>Date of Birth</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientTableBody">
+                                <!-- Patient rows will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Section -->
+        <div id="doctorSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Doctor Management</h2>
+                <button class="btn btn-primary" id="addDoctorBtn">Add New Doctor</button>
+            </div>
+            <div class="card mb-4" id="doctorFormCard" style="display: none;">
+                <div class="card-header bg-primary text-white">
+                    <h5 id="doctorFormTitle">Add New Doctor</h5>
+                </div>
+                <div class="card-body">
+                    <form id="doctorForm">
+                        <input type="hidden" id="doctorId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="doctorName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorSpecialization" class="form-label">Specialization</label>
+                                <input type="text" class="form-control" id="doctorSpecialization" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorLicense" class="form-label">License Number</label>
+                                <input type="text" class="form-control" id="doctorLicense" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorExperience" class="form-label">Experience (Years)</label>
+                                <input type="number" class="form-control" id="doctorExperience" required min="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorPhone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="doctorPhone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="doctorEmail" required>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="cancelDoctorBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="saveDoctorBtn">Save Doctor</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Specialization</th>
+                                    <th>License</th>
+                                    <th>Experience</th>
+                                    <th>Contact</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorTableBody">
+                                <!-- Doctor rows will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapping Section -->
+        <div id="mappingSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Doctor-Patient Assignments</h2>
+                <button class="btn btn-primary" id="addMappingBtn">Create New Assignment</button>
+            </div>
+            <div class="card mb-4" id="mappingFormCard" style="display: none;">
+                <div class="card-header bg-primary text-white">
+                    <h5>Assign Doctor to Patient</h5>
+                </div>
+                <div class="card-body">
+                    <form id="mappingForm">
+                        <input type="hidden" id="mappingId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="mappingPatient" class="form-label">Patient</label>
+                                <select class="form-control" id="mappingPatient" required>
+                                    <option value="">Select Patient</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="mappingDoctor" class="form-label">Doctor</label>
+                                <select class="form-control" id="mappingDoctor" required>
+                                    <option value="">Select Doctor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mappingNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="mappingNotes" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="cancelMappingBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Assignment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Assigned Date</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mappingTableBody">
+                                <!-- Mapping rows will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // API URL
+        const API_BASE_URL = '/api';
+        const AUTH_URL = '/api/auth';
+        
+        // Token storage
+        let authToken = localStorage.getItem('authToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+        
+        // DOM elements
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+        const authSection = document.getElementById('authSection');
+        const dashboard = document.getElementById('dashboard');
+        const patientSection = document.getElementById('patientSection');
+        const doctorSection = document.getElementById('doctorSection');
+        const mappingSection = document.getElementById('mappingSection');
+        const navItems = document.getElementById('navItems');
+        
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (authToken) {
+                // Verify token validity
+                fetchUserDetails();
+            }
+        });
+        
+        // Show error message
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Authentication Headers
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            };
+        }
+        
+        // Login Form Submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Login failed. Please check your credentials.');
+                }
+                
+                // Save tokens
+                authToken = data.access;
+                refreshToken = data.refresh;
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                
+                showSuccess('Login successful!');
+                setupAuthenticatedUI();
+                fetchUserDetails();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // Register Form Submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
+            const password = document.getElementById('regPassword').value;
+            const password2 = document.getElementById('regPassword2').value;
+            
+            if (password !== password2) {
+                return showError('Passwords do not match!');
+            }
+            
+            try {
+                const response = await fetch(`${AUTH_URL}/register/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        first_name: firstName,
+                        last_name: lastName,
+                        password,
+                        password2
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    const errors = data;
+                    let errorMsg = '';
+                    for (const key in errors) {
+                        errorMsg += `${key}: ${errors[key].join(', ')}\n`;
+                    }
+                    throw new Error(errorMsg || 'Registration failed.');
+                }
+                
+                // Save tokens
+                authToken = data.access;
+                refreshToken = data.refresh;
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                
+                showSuccess('Registration successful!');
+                setupAuthenticatedUI();
+                fetchUserDetails();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // Fetch user details
+        async function fetchUserDetails() {
+            try {
+                const response = await fetch(`${AUTH_URL}/user/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+                
+                const userData = await response.json();
+                setupAuthenticatedUI(userData);
+                
+            } catch (error) {
+                // Token might be expired
+                logout();
+            }
+        }
+        
+        // Set up UI for authenticated users
+        function setupAuthenticatedUI(userData) {
+            // Hide auth section, show dashboard
+            authSection.style.display = 'none';
+            dashboard.style.display = 'block';
+            
+            // Update navigation
+            navItems.innerHTML = `
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navDashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navPatients">Patients</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navDoctors">Doctors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navMappings">Assignments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutBtn">Logout</a>
+                </li>
+            `;
+            
+            // Set up navigation event listeners
+            document.getElementById('navDashboard').addEventListener('click', showDashboard);
+            document.getElementById('navPatients').addEventListener('click', showPatients);
+            document.getElementById('navDoctors').addEventListener('click', showDoctors);
+            document.getElementById('navMappings').addEventListener('click', showMappings);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Dashboard buttons
+            document.getElementById('showPatients').addEventListener('click', showPatients);
+            document.getElementById('showDoctors').addEventListener('click', showDoctors);
+            document.getElementById('showMappings').addEventListener('click', showMappings);
+            
+            // Load initial data
+            loadPatients();
+            loadDoctors();
+            loadMappings();
+        }
+        
+        // Show dashboard
+        function showDashboard() {
+            dashboard.style.display = 'block';
+            patientSection.style.display = 'none';
+            doctorSection.style.display = 'none';
+            mappingSection.style.display = 'none';
+        }
+        
+        // Show patients section
+        function showPatients() {
+            dashboard.style.display = 'none';
+            patientSection.style.display = 'block';
+            doctorSection.style.display = 'none';
+            mappingSection.style.display = 'none';
+            loadPatients();
+        }
+        
+        // Show doctors section
+        function showDoctors() {
+            dashboard.style.display = 'none';
+            patientSection.style.display = 'none';
+            doctorSection.style.display = 'block';
+            mappingSection.style.display = 'none';
+            loadDoctors();
+        }
+        
+        // Show mappings section
+        function showMappings() {
+            dashboard.style.display = 'none';
+            patientSection.style.display = 'none';
+            doctorSection.style.display = 'none';
+            mappingSection.style.display = 'block';
+            loadMappings();
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            authToken = null;
+            refreshToken = null;
+            
+            authSection.style.display = 'block';
+            dashboard.style.display = 'none';
+            patientSection.style.display = 'none';
+            doctorSection.style.display = 'none';
+            mappingSection.style.display = 'none';
+            
+            navItems.innerHTML = '';
+            
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            showSuccess('Logged out successfully!');
+        }
+        
+        // ===== PATIENT FUNCTIONALITY =====
+        
+        // Load patients data
+        async function loadPatients() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load patients data');
+                }
+                
+                const patients = await response.json();
+                renderPatients(patients);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Render patients in the table
+        function renderPatients(patients) {
+            const tableBody = document.getElementById('patientTableBody');
+            tableBody.innerHTML = '';
+            
+            if (patients.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No patients found. Add a new patient to get started.</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            patients.forEach(patient => {
+                const row = document.createElement('tr');
+                
+                const dateOfBirth = new Date(patient.date_of_birth).toLocaleDateString();
+                
+                row.innerHTML = `
+                    <td>${patient.name}</td>
+                    <td>${patient.gender}</td>
+                    <td>${dateOfBirth}</td>
+                    <td>${patient.phone_number}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-patient" data-id="${patient.id}">View</button>
+                        <button class="btn btn-sm btn-warning edit-patient" data-id="${patient.id}">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-patient" data-id="${patient.id}">Delete</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to the buttons
+            document.querySelectorAll('.view-patient').forEach(button => {
+                button.addEventListener('click', () => viewPatient(button.getAttribute('data-id')));
+            });
+            document.querySelectorAll('.edit-patient').forEach(button => {
+                button.addEventListener('click', () => editPatient(button.getAttribute('data-id')));
+            });
+            document.querySelectorAll('.delete-patient').forEach(button => {
+                button.addEventListener('click', () => deletePatient(button.getAttribute('data-id')));
+            });
+        }
+        
+        // Add patient button event
+        document.getElementById('addPatientBtn').addEventListener('click', () => {
+            document.getElementById('patientFormTitle').textContent = 'Add New Patient';
+            document.getElementById('patientId').value = '';
+            document.getElementById('patientForm').reset();
+            document.getElementById('patientFormCard').style.display = 'block';
+        });
+        
+        // Cancel patient form button event
+        document.getElementById('cancelPatientBtn').addEventListener('click', () => {
+            document.getElementById('patientFormCard').style.display = 'none';
+        });
+        
+        // Submit patient form
+        document.getElementById('patientForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const patientId = document.getElementById('patientId').value;
+            const patientData = {
+                name: document.getElementById('patientName').value,
+                date_of_birth: document.getElementById('patientDob').value,
+                gender: document.getElementById('patientGender').value,
+                address: document.getElementById('patientAddress').value,
+                phone_number: document.getElementById('patientPhone').value,
+                medical_history: document.getElementById('patientMedicalHistory').value || ''
+            };
+            
+            try {
+                let response;
+                
+                if (patientId) {
+                    // Update existing patient
+                    response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify(patientData)
+                    });
+                } else {
+                    // Create new patient
+                    response = await fetch(`${API_BASE_URL}/patients/`, {
+                        method: 'POST',
+                        headers: getHeaders(),
+                        body: JSON.stringify(patientData)
+                    });
+                }
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    let errorMsg = 'Failed to save patient data: ';
+                    for (const key in data) {
+                        errorMsg += `${key}: ${data[key]} `;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                showSuccess('Patient saved successfully!');
+                document.getElementById('patientFormCard').style.display = 'none';
+                loadPatients();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // View patient details
+        async function viewPatient(patientId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load patient details');
+                }
+                
+                const patient = await response.json();
+                alert(`
+                    Patient Details:
+                    
+                    Name: ${patient.name}
+                    Date of Birth: ${new Date(patient.date_of_birth).toLocaleDateString()}
+                    Gender: ${patient.gender}
+                    Phone: ${patient.phone_number}
+                    Address: ${patient.address}
+                    
+                    Medical History:
+                    ${patient.medical_history || 'No medical history recorded'}
+                    
+                    ${patient.doctors ? `
+                    Assigned Doctors:
+                    ${patient.doctors.map(doctor => `- ${doctor.name} (${doctor.specialization})`).join('\n')}
+                    ` : ''}
+                `);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Edit patient
+        async function editPatient(patientId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load patient details for editing');
+                }
+                
+                const patient = await response.json();
+                
+                document.getElementById('patientFormTitle').textContent = 'Edit Patient';
+                document.getElementById('patientId').value = patient.id;
+                document.getElementById('patientName').value = patient.name;
+                document.getElementById('patientDob').value = patient.date_of_birth.split('T')[0];
+                document.getElementById('patientGender').value = patient.gender;
+                document.getElementById('patientPhone').value = patient.phone_number;
+                document.getElementById('patientAddress').value = patient.address;
+                document.getElementById('patientMedicalHistory').value = patient.medical_history || '';
+                
+                document.getElementById('patientFormCard').style.display = 'block';
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Delete patient
+        async function deletePatient(patientId) {
+            if (!confirm('Are you sure you want to delete this patient?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/${patientId}/`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete patient');
+                }
+                
+                showSuccess('Patient deleted successfully!');
+                loadPatients();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // ===== DOCTOR FUNCTIONALITY =====
+        
+        // Load doctors data
+        async function loadDoctors() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load doctors data');
+                }
+                
+                const doctors = await response.json();
+                renderDoctors(doctors);
+                updateDoctorDropdown(doctors);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Render doctors in the table
+        function renderDoctors(doctors) {
+            const tableBody = document.getElementById('doctorTableBody');
+            tableBody.innerHTML = '';
+            
+            if (doctors.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center">No doctors found. Add a new doctor to get started.</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            doctors.forEach(doctor => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>Dr. ${doctor.name}</td>
+                    <td>${doctor.specialization}</td>
+                    <td>${doctor.license_number}</td>
+                    <td>${doctor.experience_years} year(s)</td>
+                    <td>
+                        <div>${doctor.email}</div>
+                        <div>${doctor.phone_number}</div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-doctor" data-id="${doctor.id}">View</button>
+                        <button class="btn btn-sm btn-warning edit-doctor" data-id="${doctor.id}">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-doctor" data-id="${doctor.id}">Delete</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to the buttons
+            document.querySelectorAll('.view-doctor').forEach(button => {
+                button.addEventListener('click', () => viewDoctor(button.getAttribute('data-id')));
+            });
+            document.querySelectorAll('.edit-doctor').forEach(button => {
+                button.addEventListener('click', () => editDoctor(button.getAttribute('data-id')));
+            });
+            document.querySelectorAll('.delete-doctor').forEach(button => {
+                button.addEventListener('click', () => deleteDoctor(button.getAttribute('data-id')));
+            });
+        }
+        
+        // Add doctor button event
+        document.getElementById('addDoctorBtn').addEventListener('click', () => {
+            document.getElementById('doctorFormTitle').textContent = 'Add New Doctor';
+            document.getElementById('doctorId').value = '';
+            document.getElementById('doctorForm').reset();
+            document.getElementById('doctorFormCard').style.display = 'block';
+        });
+        
+        // Cancel doctor form button event
+        document.getElementById('cancelDoctorBtn').addEventListener('click', () => {
+            document.getElementById('doctorFormCard').style.display = 'none';
+        });
+        
+        // Submit doctor form
+        document.getElementById('doctorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const doctorId = document.getElementById('doctorId').value;
+            const doctorData = {
+                name: document.getElementById('doctorName').value,
+                specialization: document.getElementById('doctorSpecialization').value,
+                license_number: document.getElementById('doctorLicense').value,
+                experience_years: document.getElementById('doctorExperience').value,
+                phone_number: document.getElementById('doctorPhone').value,
+                email: document.getElementById('doctorEmail').value
+            };
+            
+            try {
+                let response;
+                
+                if (doctorId) {
+                    // Update existing doctor
+                    response = await fetch(`${API_BASE_URL}/doctors/${doctorId}/`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify(doctorData)
+                    });
+                } else {
+                    // Create new doctor
+                    response = await fetch(`${API_BASE_URL}/doctors/`, {
+                        method: 'POST',
+                        headers: getHeaders(),
+                        body: JSON.stringify(doctorData)
+                    });
+                }
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    let errorMsg = 'Failed to save doctor data: ';
+                    for (const key in data) {
+                        errorMsg += `${key}: ${data[key]} `;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                showSuccess('Doctor saved successfully!');
+                document.getElementById('doctorFormCard').style.display = 'none';
+                loadDoctors();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // View doctor details
+        async function viewDoctor(doctorId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load doctor details');
+                }
+                
+                const doctor = await response.json();
+                alert(`
+                    Doctor Details:
+                    
+                    Name: Dr. ${doctor.name}
+                    Specialization: ${doctor.specialization}
+                    License Number: ${doctor.license_number}
+                    Experience: ${doctor.experience_years} year(s)
+                    Email: ${doctor.email}
+                    Phone: ${doctor.phone_number}
+                    
+                    ${doctor.patients ? `
+                    Assigned Patients:
+                    ${doctor.patients.map(patient => `- ${patient.name} (${patient.gender})`).join('\n')}
+                    ` : ''}
+                `);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Edit doctor
+        async function editDoctor(doctorId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load doctor details for editing');
+                }
+                
+                const doctor = await response.json();
+                
+                document.getElementById('doctorFormTitle').textContent = 'Edit Doctor';
+                document.getElementById('doctorId').value = doctor.id;
+                document.getElementById('doctorName').value = doctor.name;
+                document.getElementById('doctorSpecialization').value = doctor.specialization;
+                document.getElementById('doctorLicense').value = doctor.license_number;
+                document.getElementById('doctorExperience').value = doctor.experience_years;
+                document.getElementById('doctorPhone').value = doctor.phone_number;
+                document.getElementById('doctorEmail').value = doctor.email;
+                
+                document.getElementById('doctorFormCard').style.display = 'block';
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Delete doctor
+        async function deleteDoctor(doctorId) {
+            if (!confirm('Are you sure you want to delete this doctor?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}/`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete doctor');
+                }
+                
+                showSuccess('Doctor deleted successfully!');
+                loadDoctors();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Update doctor dropdown
+        function updateDoctorDropdown(doctors) {
+            const dropdown = document.getElementById('mappingDoctor');
+            
+            // Keep the first option
+            dropdown.innerHTML = '<option value="">Select Doctor</option>';
+            
+            doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `Dr. ${doctor.name} (${doctor.specialization})`;
+                dropdown.appendChild(option);
+            });
+        }
+        
+        // ===== MAPPING FUNCTIONALITY =====
+        
+        // Load mappings data
+        async function loadMappings() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/mappings/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load assignment data');
+                }
+                
+                const mappings = await response.json();
+                renderMappings(mappings);
+                
+                // Load patients for dropdown
+                loadPatientsForDropdown();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Load patients for dropdown
+        async function loadPatientsForDropdown() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/`, {
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load patients data for dropdown');
+                }
+                
+                const patients = await response.json();
+                updatePatientDropdown(patients);
+                
+            } catch (error) {
+                showError('Failed to load patients: ' + error.message);
+            }
+        }
+        
+        // Update patient dropdown
+        function updatePatientDropdown(patients) {
+            const dropdown = document.getElementById('mappingPatient');
+            
+            // Keep the first option
+            dropdown.innerHTML = '<option value="">Select Patient</option>';
+            
+            patients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id;
+                option.textContent = patient.name;
+                dropdown.appendChild(option);
+            });
+        }
+        
+        // Render mappings in the table
+        function renderMappings(mappings) {
+            const tableBody = document.getElementById('mappingTableBody');
+            tableBody.innerHTML = '';
+            
+            if (mappings.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No assignments found. Create a new assignment to get started.</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            mappings.forEach(mapping => {
+                const row = document.createElement('tr');
+                
+                const assignedDate = new Date(mapping.assigned_date).toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${mapping.patient_name}</td>
+                    <td>${mapping.doctor_name}</td>
+                    <td>${assignedDate}</td>
+                    <td>${mapping.notes || 'No notes'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger delete-mapping" data-id="${mapping.id}">Delete</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to the delete buttons
+            document.querySelectorAll('.delete-mapping').forEach(button => {
+                button.addEventListener('click', () => deleteMapping(button.getAttribute('data-id')));
+            });
+        }
+        
+        // Add mapping button event
+        document.getElementById('addMappingBtn').addEventListener('click', () => {
+            document.getElementById('mappingForm').reset();
+            document.getElementById('mappingFormCard').style.display = 'block';
+        });
+        
+        // Cancel mapping form button event
+        document.getElementById('cancelMappingBtn').addEventListener('click', () => {
+            document.getElementById('mappingFormCard').style.display = 'none';
+        });
+        
+        // Submit mapping form
+        document.getElementById('mappingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const mappingData = {
+                patient: document.getElementById('mappingPatient').value,
+                doctor: document.getElementById('mappingDoctor').value,
+                notes: document.getElementById('mappingNotes').value || '',
+                active: true
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/mappings/`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(mappingData)
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    let errorMsg = 'Failed to save assignment: ';
+                    for (const key in data) {
+                        errorMsg += `${key}: ${data[key]} `;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                showSuccess('Assignment created successfully!');
+                document.getElementById('mappingFormCard').style.display = 'none';
+                loadMappings();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // Delete mapping
+        async function deleteMapping(mappingId) {
+            if (!confirm('Are you sure you want to delete this assignment?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/mappings/${mappingId}/`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete assignment');
+                }
+                
+                showSuccess('Assignment deleted successfully!');
+                loadMappings();
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+    </script>
+</body>
+</html>
